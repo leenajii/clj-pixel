@@ -44,19 +44,20 @@
 (defn draw-left [param-x y]
   (loop [x param-x]
     (when (> x 0)
-      (let [idx (get-location x y)]
-      (if (act/stop? (get-rgb pixelvector idx))
+      (let [idx (get-location x y)
+            rgb (get-rgb pixelvector idx)]
+      (if (act/stop? rgb)
         (println "STOP LEFT!")
         (do
           (white idx)
-          (recur (dec x))))))))
+          (if (act/turn-right? rgb)
+            (draw-up x y)
+            (recur (dec x)))))))))
 
 (defn action? [rgb idx x y]
   (cond
     (act/draw-up? rgb) (do (white idx)(draw-up x y))
     (act/draw-left? rgb) (do (white idx)(draw-left x y))
-    (act/turn-left? rgb) (white idx)
-    (act/turn-right? rgb) (white idx)
     (act/stop? rgb) (color idx (hash-map :r 55 :g 55 :b 55))
     :else (color idx {:r 0 :g 0 :b 0})))
 
