@@ -25,20 +25,31 @@
 (defn white [idx]
   (color idx (hash-map :r 255 :g 255 :b 255)))
 
-(defn draw-up [x y]
+#_(defn draw-up [x y]
   (dotimes [y height]
     (let [idx (get-location x y)]
       (if (not (act/stop? (get-rgb pixelvector idx)))
         (white (get-location x y))))))
 
-(defn draw-left [x y]
-  (when (> x 0)
-    (let [idx (get-location x y)]
-    (if (act/stop? (get-rgb idx))
-      "I found it! Now I want to stop executing!"
-      (do
-        (white idx)
-        (recur (dec x)))))))
+(defn draw-up [x param-y]
+  (loop [y param-y]
+    (when (< y height)
+      (let [idx (get-location x y)]
+        (if (act/stop? (get-rgb pixelvector idx))
+          (println "STOP UP!")
+          (do
+            (white idx)
+            (recur (inc y))))))))
+
+(defn draw-left [param-x y]
+  (loop [x param-x]
+    (when (> x 0)
+      (let [idx (get-location x y)]
+      (if (act/stop? (get-rgb pixelvector idx))
+        (println "STOP LEFT!")
+        (do
+          (white idx)
+          (recur (dec x))))))))
 
 (defn action? [rgb idx x y]
   (cond
